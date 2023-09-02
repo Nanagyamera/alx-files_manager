@@ -12,9 +12,9 @@ class DBClient {
    */
   constructor() {
     envLoader();
-    const dbHost = process.env.DB_HOST || 'localhost';
-    const dbPort = process.env.DB_PORT || 27017;
-    const dbName = process.env.DB_DATABASE || 'files_manager';
+    const host = process.env.DB_HOST || 'localhost';
+    const port = process.env.DB_PORT || 27017;
+    const database = process.env.DB_DATABASE || 'files_manager';
     const dbURL = `mongodb://${host}:${port}/${database}`;
 
     this.client = new mongodb.MongoClient(dbURL, { useUnifiedTopology: true });
@@ -34,8 +34,7 @@ class DBClient {
    * @returns {Promise<Number>}
    */
   async nbUsers() {
-    const usersCollection = this.client.db().collection('users');
-    return usersCollection.countDocuments();
+    return this.client.db().collection('users').countDocuments();
   }
 
   /**
@@ -43,8 +42,7 @@ class DBClient {
    * @returns {Promise<Number>}
    */
   async nbFiles() {
-    const filesCollection = this.client.db().collection('files');
-    return filesCollection.countDocuments();
+    return this.client.db().collection('files').countDocuments();
   }
 
   /**
