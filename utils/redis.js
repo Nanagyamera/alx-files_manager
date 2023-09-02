@@ -1,6 +1,8 @@
 const redis = require('redis');
+//Represents a Redis client.
 
 class RedisClient {
+    //Creates a new RedisClient instance.
     constructor() {
         this.client = redis.createClient();
 
@@ -9,7 +11,8 @@ class RedisClient {
         });
     }
 
-    isAlive() {
+    //Checks if this client's connection to the Redis server is active.
+	isAlive() {
         return this.client.connected;
     }
 
@@ -25,7 +28,8 @@ class RedisClient {
         });
     }
 
-    async set(key, value, duration) {
+    //Stores a key and its value along with an expiration time.
+	async set(key, value, duration) {
         return new Promise((resolve, reject) => {
             this.client.setex(key, duration, value, (err, reply) => {
                 if (err) {
