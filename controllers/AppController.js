@@ -1,32 +1,19 @@
-const redisClient = require('../utils/redis');
-const dbClient = require('../utils/db');
+/* eslint-disable import/no-named-as-default */
+import redisClient from '../utils/redis';
+import dbClient from '../utils/db';
 
-const AppController = {
-    getStatus: async (req, res) => {
-        const redisStatus = redisClient.isAlive();
-        const dbStatus = dbClient.isAlive();
+export default class AppController {
+  static getStatus(req, res) {
+    res.status(200).json({
+      redis: redisClient.isAlive(),
+      db: dbClient.isAlive(),
+    });
+  }
 
-        const status = {
-            redis: redisStatus,
-            db: dbStatus
-        };
-
-        const statusCode = redisStatus && dbStatus ? 200 : 500;
-
-        res.status(statusCode).json(status);
-    },
-
-    getStats: async (req, res) => {
-        const usersCount = await dbClient.nbUsers();
-        const filesCount = await dbClient.nbFiles();
-
-        const stats = {
-            users: usersCount,
-            files: filesCount
-        };
-
-        res.status(200).json(stats);
-    }
-};
-
-module.exports = AppController;
+  static getStats(req, res) {
+    Promise.all([dbClient.nbUsers(), dbClient.nbFiles()])
+      .then(([usersCount, filesCount]) => {
+        res.status(200).json({ users: usersCount, files: filesCount });
+      });
+  }
+}
